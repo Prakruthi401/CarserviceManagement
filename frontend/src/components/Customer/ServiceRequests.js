@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -17,11 +17,8 @@ const ServiceRequests = () => {
   });
   const { user } = useAuth();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [requestsResponse, carsResponse] = await Promise.all([
@@ -35,7 +32,11 @@ const ServiceRequests = () => {
       setError('Failed to fetch data');
       setLoading(false);
     }
-  };
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleCreateRequest = async () => {
     try {

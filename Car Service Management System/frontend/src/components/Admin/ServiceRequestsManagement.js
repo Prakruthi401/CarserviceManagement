@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const ServiceRequestsManagement = () => {
@@ -10,11 +10,8 @@ const ServiceRequestsManagement = () => {
   const [filterStatus, setFilterStatus] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchServiceRequests();
-  }, [filterStatus]);
 
-  const fetchServiceRequests = async () => {
+  const fetchServiceRequests = useCallback(async () => {
     try {
       setLoading(true);
       let url = '/api/dashboard/service-requests';
@@ -32,7 +29,11 @@ const ServiceRequestsManagement = () => {
       setError('Failed to fetch service requests');
       setLoading(false);
     }
-  };
+  }, [filterStatus]);
+
+  useEffect(() => {
+    fetchServiceRequests();
+  }, [fetchServiceRequests]);
 
   const handleUpdateStatus = async (requestId, newStatus) => {
     try {

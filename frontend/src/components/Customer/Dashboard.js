@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -14,11 +14,8 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
-  useEffect(() => {
-    fetchDashboardStats();
-  }, []);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -49,7 +46,11 @@ const Dashboard = () => {
       setError('Failed to fetch dashboard statistics');
       setLoading(false);
     }
-  };
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, [fetchDashboardStats]);
 
   const StatCard = ({ title, value, icon, color, link }) => (
     <div className="card stat-card" style={{ borderLeft: `4px solid ${color}` }}>

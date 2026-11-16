@@ -5,8 +5,11 @@ const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = 8080;
-const JWT_SECRET = 'mySecretKey';
+const PORT = Number(process.env.PORT || 8080);
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || Buffer.byteLength(JWT_SECRET) < 32) {
+  throw new Error('Set JWT_SECRET to a private random value of at least 32 bytes before starting.');
+}
 
 // In-memory storage (for demo purposes)
 let users = [];
@@ -530,7 +533,7 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, async () => {
+app.listen(PORT, '127.0.0.1', async () => {
   console.log(`Mock backend server running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   

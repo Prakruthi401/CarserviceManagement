@@ -35,7 +35,7 @@ public class AuthController {
             User registeredUser = userService.registerUser(user);
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
-            response.put("user", Map.of(
+            response.put("user", com.csms.util.Dto.map(
                 "id", registeredUser.getId(),
                 "name", registeredUser.getName(),
                 "email", registeredUser.getEmail(),
@@ -71,7 +71,7 @@ public class AuthController {
             Map<String, Object> response = new HashMap<>();
             response.put("token", jwt);
             response.put("type", "Bearer");
-            response.put("user", Map.of(
+            response.put("user", com.csms.util.Dto.map(
                 "id", user.getId(),
                 "name", user.getName(),
                 "email", user.getEmail(),
@@ -100,7 +100,7 @@ public class AuthController {
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         Map<String, Object> response = new HashMap<>();
-        response.put("user", Map.of(
+        response.put("user", com.csms.util.Dto.map(
             "id", user.getId(),
             "name", user.getName(),
             "email", user.getEmail(),

@@ -43,6 +43,7 @@ const Profile = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     
     try {
       setLoading(true);

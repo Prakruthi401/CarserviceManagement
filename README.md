@@ -1,263 +1,54 @@
-# Car Service Management System (CSMS)
+# Car Service Management System
 
-A full-stack web application designed to manage and track vehicle service operations digitally. This system allows customers to register, manage vehicles, and submit service requests, while administrators can monitor requests and update service status.
+A learning project with a React interface for customer accounts, vehicles, and service requests. This repository contains two backend implementations. Choose one; do not run both on port 8080.
 
-## Technology Stack
+## Repository layout
 
-### Backend
-- **Node.js** with Express server
-- **In-memory storage** for demo purposes
-- **JWT Authentication** (available but not required for demo)
-- **Realistic dummy data** for testing
+| Path | Purpose |
+| --- | --- |
+| `frontend/` | Root React frontend |
+| `backend/` | Express demo backend with in-memory data |
+| `Car Service Management System/backend/` | Java 17 / Spring Boot 3.2 / MySQL backend |
+| `Car Service Management System/frontend/` | Frontend copy for the Java setup |
+| `Car Service Management System/mock-backend/` | Older Express mock variant |
 
-### Frontend
-- **React 18** with functional components
-- **React Router** for navigation
-- **Axios** for HTTP requests
-- **Bootstrap 5** for responsive UI
-- **Material Icons** for icons
+The Node demo is not a MySQL-backed service. Its data is seeded in memory and is lost on restart. The Java backend is a separate implementation using Spring Data JPA and MySQL. Four incomplete controller examples (invoice, report, settings, notification) are preserved under `docs/incomplete-java-controller-examples/` outside the executable source tree because their required services were absent. Those Java features are not implemented.
 
-## Features
+## Quick local demo: Node + React
 
-### Administrator Features
-- **Secure Login**: JWT-based authentication
-- **User Management**: View, edit, and delete customer accounts
-- **Service Request Management**: View all requests, update status, filter by status
-- **Car Management**: View all registered vehicles
-- **Dashboard**: Real-time statistics and overview
+Use Node.js 20 or 22. Set `JWT_SECRET` to a private random value of at least 32 bytes in the backend terminal. Do not use the old committed `mySecretKey` value.
 
-### Customer Features
-- **User Registration**: Create new customer accounts
-- **Profile Management**: Update personal information
-- **Car Management**: Add, edit, and delete personal vehicles
-- **Service Requests**: Create new service requests, track status
-- **Dashboard**: Personal statistics and quick actions
-
-## Database Schema
-
-### Users Table
-- `id` (Primary Key)
-- `name` (String)
-- `email` (String, Unique)
-- `password` (String, Encrypted)
-- `phone` (String)
-- `role` (Enum: ADMIN, CUSTOMER)
-
-### Cars Table
-- `id` (Primary Key)
-- `user_id` (Foreign Key to Users)
-- `car_model` (String)
-- `car_brand` (String)
-- `car_number` (String, Unique)
-
-### Service Requests Table
-- `id` (Primary Key)
-- `user_id` (Foreign Key to Users)
-- `car_id` (Foreign Key to Cars, Nullable)
-- `service_type` (String)
-- `description` (Text, Nullable)
-- `request_date` (DateTime)
-- `status` (Enum: PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
-- `updated_date` (DateTime)
-
-## Project Structure
-
-```
-Car Service Management System/
-|
-backend/
-|-- src/main/java/com/csms/
-|   |-- CarServiceManagementApplication.java
-|   |-- controller/
-|   |   |-- AuthController.java
-|   |   |-- UserController.java
-|   |   |-- CarController.java
-|   |   |-- ServiceRequestController.java
-|   |-- entity/
-|   |   |-- User.java
-|   |   |-- Car.java
-|   |   |-- ServiceRequest.java
-|   |-- repository/
-|   |   |-- UserRepository.java
-|   |   |-- CarRepository.java
-|   |   |-- ServiceRequestRepository.java
-|   |-- service/
-|   |   |-- UserService.java
-|   |   |-- CarService.java
-|   |   |-- ServiceRequestService.java
-|   |-- security/
-|   |   |-- SecurityConfig.java
-|   |   |-- JwtUtil.java
-|   |   |-- JwtAuthenticationFilter.java
-|   |   |-- JwtAuthenticationEntryPoint.java
-|   |   |-- CustomUserDetailsService.java
-|-- src/main/resources/
-|   |-- application.properties
-|-- pom.xml
-
-frontend/
-|-- public/
-|   |-- index.html
-|-- src/
-|   |-- components/
-|   |   |-- Auth/
-|   |   |   |-- Login.js
-|   |   |   |-- Register.js
-|   |   |-- Admin/
-|   |   |   |-- AdminDashboard.js
-|   |   |   |-- Dashboard.js
-|   |   |   |-- UsersManagement.js
-|   |   |   |-- ServiceRequestsManagement.js
-|   |   |   |-- CarsManagement.js
-|   |   |-- Customer/
-|   |   |   |-- CustomerDashboard.js
-|   |   |   |-- Dashboard.js
-|   |   |   |-- MyCars.js
-|   |   |   |-- ServiceRequests.js
-|   |   |   |-- Profile.js
-|   |-- contexts/
-|   |   |-- AuthContext.js
-|   |-- App.js
-|   |-- App.css
-|   |-- index.js
-|   |-- index.css
-|-- package.json
+```sh
+cd backend
+npm ci
+# Set JWT_SECRET in your environment before this command:
+npm start
 ```
 
-## API Endpoints
+In a second terminal:
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user info
+```sh
+cd frontend
+npm ci
+npm run build
+npm run preview
+```
 
-### Users
-- `GET /api/users` - Get all users (Admin only)
-- `GET /api/users/{id}` - Get user by ID
-- `PUT /api/users/{id}` - Update user
-- `DELETE /api/users/{id}` - Delete user (Admin only)
+Open the local preview URL (normally port 3000). The loopback-only preview proxies API requests to port 8080. `npm start` is also available for the older development server, but its host checks can fail in restricted network environments. Demo seed accounts include `john.anderson@email.com` (customer) and `robert.taylor@email.com` (admin), both with the intentionally public demo password `password123`. Use only synthetic data. The demo API binds to loopback, has public read endpoints and incomplete access checks, and must not be exposed on the internet. The legacy React Scripts dependency tree also has known audit findings that require a separate dependency and security update before hosting.
 
-### Cars
-- `POST /api/cars` - Add new car
-- `GET /api/cars/user/{userId}` - Get user's cars
-- `GET /api/cars/{id}` - Get car by ID
-- `PUT /api/cars/{id}` - Update car
-- `DELETE /api/cars/{id}` - Delete car
-- `GET /api/cars` - Get all cars (Admin only)
+## Java + MySQL implementation
 
-### Service Requests
-- `POST /api/service-requests` - Create service request
-- `GET /api/service-requests/user/{userId}` - Get user's requests
-- `GET /api/service-requests/status/{status}` - Get requests by status (Admin only)
-- `GET /api/service-requests/{id}` - Get request by ID
-- `PUT /api/service-requests/{id}` - Update service request
-- `PUT /api/service-requests/{id}/status` - Update request status (Admin only)
-- `DELETE /api/service-requests/{id}` - Delete request (Admin only)
+Requires Java 17, Maven, and a local MySQL database named `car_service_db`. Set `DB_USERNAME`, `DB_PASSWORD`, and a private random `JWT_SECRET` of at least 32 bytes in the environment. The required JWT secret prevents the old short signing key from causing token-generation failures.
 
-## Installation and Setup
+```sh
+cd "Car Service Management System/backend"
+mvn spring-boot:run
+```
 
-### Prerequisites
-- Java 17 or higher
-- MySQL 8.0 or higher
-- Node.js 16 or higher
-- npm or yarn
+Run the matching frontend from `Car Service Management System/frontend/` with `npm ci`, `npm run build`, and `npm run preview`. Database tables are updated through Hibernate in the current development configuration. Review that setting before using an existing database.
 
-### Database Setup
-1. Create a MySQL database named `car_service_db`
-2. Update database credentials in `backend/src/main/resources/application.properties`
+The Docker Compose configuration in the nested project also requires private `MYSQL_ROOT_PASSWORD`, `DB_PASSWORD`, and `JWT_SECRET` environment values. It is an alternative development setup, not a verified hosted deployment.
 
-### Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+## Scope and limits
 
-2. Build and run the application:
-   ```bash
-   mvn clean install
-   mvn spring-boot:run
-   ```
-
-   The backend will start on `http://localhost:8080`
-
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-   The frontend will start on `http://localhost:3000`
-
-## Usage
-
-### Default Admin Account
-After starting the application, you can register an admin account:
-1. Go to `http://localhost:3000/register`
-2. Fill in the details and select "Administrator" as account type
-3. Use this account to access admin features
-
-### Customer Workflow
-1. Register a new customer account
-2. Login to the customer dashboard
-3. Add your vehicles in "My Cars" section
-4. Create service requests for your vehicles
-5. Track the status of your service requests
-
-### Admin Workflow
-1. Login with admin credentials
-2. View dashboard statistics
-3. Manage users, cars, and service requests
-4. Update service request statuses
-5. Monitor all system activities
-
-## Configuration
-
-### Backend Configuration
-Edit `backend/src/main/resources/application.properties`:
-- Database connection settings
-- JWT secret and expiration
-- Server port
-- CORS settings
-
-### Frontend Configuration
-The frontend is configured to proxy API requests to `http://localhost:8080` via the `proxy` setting in `package.json`.
-
-## Security Features
-- JWT-based authentication
-- Password encryption with BCrypt
-- Role-based access control
-- CORS configuration
-- Input validation
-
-## Testing
-- Backend: Use Postman or similar tools to test API endpoints
-- Frontend: Test through the web interface
-- Database: Verify data integrity through MySQL client
-
-## Future Enhancements
-- Email notifications for service status updates
-- File upload for service documents
-- Payment integration
-- Advanced reporting and analytics
-- Mobile application
-- Real-time notifications with WebSocket
-
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-This project is for educational purposes as part of an internship program.
+This is a local demonstration, not a deployed service. Authentication, authorization, seeded demo accounts, CORS, database settings, and error handling need review before handling real customer data. Generated dependency folders are excluded; install packages from the lockfiles. The root README is the setup guide for both implementations; nested setup documents point here to avoid contradictory instructions.

@@ -24,7 +24,7 @@ public class UserController {
     public ResponseEntity<List<Map<String, Object>>> getAllUsers() {
         List<User> users = userService.findAllUsers();
         List<Map<String, Object>> userDTOs = users.stream()
-            .map(user -> Map.of(
+            .map(user -> com.csms.util.Dto.map(
                 "id", user.getId(),
                 "name", user.getName(),
                 "email", user.getEmail(),
@@ -39,7 +39,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<Map<String, Object>> getUserById(@PathVariable Long id) {
         User user = userService.findById(id);
-        Map<String, Object> userDTO = Map.of(
+        Map<String, Object> userDTO = com.csms.util.Dto.map(
             "id", user.getId(),
             "name", user.getName(),
             "email", user.getEmail(),
@@ -54,9 +54,9 @@ public class UserController {
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         try {
             User updatedUser = userService.updateUser(id, userDetails);
-            Map<String, Object> response = Map.of(
+            Map<String, Object> response = com.csms.util.Dto.map(
                 "message", "User updated successfully",
-                "user", Map.of(
+                "user", com.csms.util.Dto.map(
                     "id", updatedUser.getId(),
                     "name", updatedUser.getName(),
                     "email", updatedUser.getEmail(),
@@ -66,7 +66,7 @@ public class UserController {
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
@@ -75,9 +75,9 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
-            return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
+            return ResponseEntity.ok(com.csms.util.Dto.map("message", "User deleted successfully"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 }

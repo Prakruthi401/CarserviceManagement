@@ -7,7 +7,10 @@ const { generateRealisticData } = require('./realistic-data');
 
 const app = express();
 const PORT = process.env.PORT || 8081; // Use environment variable or default
-const JWT_SECRET = 'mySecretKey';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || Buffer.byteLength(JWT_SECRET) < 32) {
+  throw new Error('Set JWT_SECRET to a private random value of at least 32 bytes before starting.');
+}
 
 // In-memory storage (for demo purposes)
 let users = [];
@@ -347,7 +350,7 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '127.0.0.1', () => {
   console.log(`Updated mock backend server running on port ${PORT}`);
   console.log(`Health check: http://localhost:${PORT}/health`);
   console.log('Dashboard statistics should now work!');

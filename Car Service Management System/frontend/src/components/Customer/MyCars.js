@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -16,11 +16,8 @@ const MyCars = () => {
   });
   const { user } = useAuth();
 
-  useEffect(() => {
-    fetchCars();
-  }, []);
 
-  const fetchCars = async () => {
+  const fetchCars = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`/api/cars/user/${user.id}`);
@@ -30,7 +27,11 @@ const MyCars = () => {
       setError('Failed to fetch cars');
       setLoading(false);
     }
-  };
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchCars();
+  }, [fetchCars]);
 
   const handleAddCar = async () => {
     try {

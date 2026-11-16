@@ -22,17 +22,8 @@ const Dashboard = () => {
       setLoading(true);
       
       // Use public dashboard endpoints (no authentication required)
-      const [statsResponse, usersResponse, carsResponse, serviceRequestsResponse] = await Promise.all([
-        axios.get('/api/dashboard/stats'),
-        axios.get('/api/dashboard/users'),
-        axios.get('/api/dashboard/cars'),
-        axios.get('/api/dashboard/service-requests')
-      ]);
-
+      const statsResponse = await axios.get('/api/dashboard/stats');
       const stats = statsResponse.data;
-      const users = usersResponse.data;
-      const cars = carsResponse.data;
-      const serviceRequests = serviceRequestsResponse.data;
 
       // Use the pre-calculated stats from the backend
       setStats({

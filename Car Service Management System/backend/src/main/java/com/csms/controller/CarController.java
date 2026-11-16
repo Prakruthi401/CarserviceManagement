@@ -24,9 +24,9 @@ public class CarController {
     public ResponseEntity<?> addCar(@RequestBody Car car, @RequestParam Long userId) {
         try {
             Car newCar = carService.addCar(car, userId);
-            Map<String, Object> response = Map.of(
+            Map<String, Object> response = com.csms.util.Dto.map(
                 "message", "Car added successfully",
-                "car", Map.of(
+                "car", com.csms.util.Dto.map(
                     "id", newCar.getId(),
                     "carModel", newCar.getCarModel(),
                     "carBrand", newCar.getCarBrand(),
@@ -36,7 +36,7 @@ public class CarController {
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
@@ -45,7 +45,7 @@ public class CarController {
     public ResponseEntity<List<Map<String, Object>>> getCarsByUserId(@PathVariable Long userId) {
         List<Car> cars = carService.findByUserId(userId);
         List<Map<String, Object>> carDTOs = cars.stream()
-            .map(car -> Map.of(
+            .map(car -> com.csms.util.Dto.map(
                 "id", car.getId(),
                 "carModel", car.getCarModel(),
                 "carBrand", car.getCarBrand(),
@@ -60,7 +60,7 @@ public class CarController {
     @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public ResponseEntity<Map<String, Object>> getCarById(@PathVariable Long id) {
         Car car = carService.findById(id);
-        Map<String, Object> carDTO = Map.of(
+        Map<String, Object> carDTO = com.csms.util.Dto.map(
             "id", car.getId(),
             "carModel", car.getCarModel(),
             "carBrand", car.getCarBrand(),
@@ -75,7 +75,7 @@ public class CarController {
     public ResponseEntity<List<Map<String, Object>>> getAllCars() {
         List<Car> cars = carService.findAllCars();
         List<Map<String, Object>> carDTOs = cars.stream()
-            .map(car -> Map.of(
+            .map(car -> com.csms.util.Dto.map(
                 "id", car.getId(),
                 "carModel", car.getCarModel(),
                 "carBrand", car.getCarBrand(),
@@ -92,9 +92,9 @@ public class CarController {
     public ResponseEntity<?> updateCar(@PathVariable Long id, @RequestBody Car carDetails) {
         try {
             Car updatedCar = carService.updateCar(id, carDetails);
-            Map<String, Object> response = Map.of(
+            Map<String, Object> response = com.csms.util.Dto.map(
                 "message", "Car updated successfully",
-                "car", Map.of(
+                "car", com.csms.util.Dto.map(
                     "id", updatedCar.getId(),
                     "carModel", updatedCar.getCarModel(),
                     "carBrand", updatedCar.getCarBrand(),
@@ -104,7 +104,7 @@ public class CarController {
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
@@ -113,9 +113,9 @@ public class CarController {
     public ResponseEntity<?> deleteCar(@PathVariable Long id) {
         try {
             carService.deleteCar(id);
-            return ResponseEntity.ok(Map.of("message", "Car deleted successfully"));
+            return ResponseEntity.ok(com.csms.util.Dto.map("message", "Car deleted successfully"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 }

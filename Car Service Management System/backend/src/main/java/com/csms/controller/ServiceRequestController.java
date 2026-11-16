@@ -26,9 +26,9 @@ public class ServiceRequestController {
                                                  @RequestParam(required = false) Long carId) {
         try {
             ServiceRequest newRequest = serviceRequestService.createServiceRequest(serviceRequest, userId, carId);
-            Map<String, Object> response = Map.of(
+            Map<String, Object> response = com.csms.util.Dto.map(
                 "message", "Service request created successfully",
-                "serviceRequest", Map.of(
+                "serviceRequest", com.csms.util.Dto.map(
                     "id", newRequest.getId(),
                     "serviceType", newRequest.getServiceType(),
                     "description", newRequest.getDescription(),
@@ -42,7 +42,7 @@ public class ServiceRequestController {
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
@@ -88,13 +88,13 @@ public class ServiceRequestController {
     public ResponseEntity<?> updateServiceRequest(@PathVariable Long id, @RequestBody ServiceRequest serviceRequestDetails) {
         try {
             ServiceRequest updatedRequest = serviceRequestService.updateServiceRequest(id, serviceRequestDetails);
-            Map<String, Object> response = Map.of(
+            Map<String, Object> response = com.csms.util.Dto.map(
                 "message", "Service request updated successfully",
                 "serviceRequest", convertToDTO(updatedRequest)
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
@@ -104,13 +104,13 @@ public class ServiceRequestController {
                                                        @RequestParam ServiceRequest.ServiceStatus status) {
         try {
             ServiceRequest updatedRequest = serviceRequestService.updateStatus(id, status);
-            Map<String, Object> response = Map.of(
+            Map<String, Object> response = com.csms.util.Dto.map(
                 "message", "Service request status updated successfully",
                 "serviceRequest", convertToDTO(updatedRequest)
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
@@ -119,14 +119,14 @@ public class ServiceRequestController {
     public ResponseEntity<?> deleteServiceRequest(@PathVariable Long id) {
         try {
             serviceRequestService.deleteServiceRequest(id);
-            return ResponseEntity.ok(Map.of("message", "Service request deleted successfully"));
+            return ResponseEntity.ok(com.csms.util.Dto.map("message", "Service request deleted successfully"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.badRequest().body(com.csms.util.Dto.map("error", e.getMessage()));
         }
     }
 
     private Map<String, Object> convertToDTO(ServiceRequest request) {
-        return Map.of(
+        return com.csms.util.Dto.map(
             "id", request.getId(),
             "serviceType", request.getServiceType(),
             "description", request.getDescription(),
