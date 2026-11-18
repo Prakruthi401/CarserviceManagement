@@ -1,5 +1,5 @@
 # Use Node.js image
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy built application to nginx
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf

@@ -1,28 +1,26 @@
 # Car Service Management System
 
-A learning project with a React interface for customer accounts, vehicles, and service requests. This repository contains two backend implementations. Choose one; do not run both on port 8080.
+A learning project I built to practise full-stack development. Customers register their cars and raise service requests; staff move each request through pending, in progress and completed. There are two backend implementations of the same app - pick one:
 
-## Repository layout
-
-| Path | Purpose |
+| Path | What it is |
 | --- | --- |
-| `frontend/` | Root React frontend |
-| `backend/` | Express demo backend with in-memory data |
-| `Car Service Management System/backend/` | Java 17 / Spring Boot 3.2 / MySQL backend |
-| `Car Service Management System/frontend/` | Frontend copy for the Java setup |
-| `Car Service Management System/mock-backend/` | Older Express mock variant |
+| `frontend/` | React 18 frontend (Vite) |
+| `backend/` | Node/Express demo backend, data kept in memory |
+| `backend-java/` | Java 17 / Spring Boot backend with MySQL |
+| `docs/` | Java API reference and old controller sketches |
 
-The Node demo is not a MySQL-backed service. Its data is seeded in memory and is lost on restart. The Java backend is a separate implementation using Spring Data JPA and MySQL. Four incomplete controller examples (invoice, report, settings, notification) are preserved under `docs/incomplete-java-controller-examples/` outside the executable source tree because their required services were absent. Those Java features are not implemented.
+The Node backend is the quick way to see the app running.
 
-## Quick local demo: Node + React
+![Screen recording of the app in use](assets/car-service-demo.gif) The Java backend is the same domain model built with Spring Data JPA, JWT security and MySQL, and is what I use to talk about the Java side.
 
-Use Node.js 20 or 22. Set `JWT_SECRET` to a private random value of at least 32 bytes in the backend terminal. Do not use the old committed `mySecretKey` value.
+## Run the demo (Node + React)
+
+Needs Node.js 20 or 22.
 
 ```sh
 cd backend
 npm ci
-# Set JWT_SECRET in your environment before this command:
-npm start
+JWT_SECRET=$(openssl rand -hex 32) npm start
 ```
 
 In a second terminal:
@@ -34,21 +32,35 @@ npm run build
 npm run preview
 ```
 
-Open the local preview URL (normally port 3000). The loopback-only preview proxies API requests to port 8080. `npm start` is also available for the older development server, but its host checks can fail in restricted network environments. Demo seed accounts include `john.anderson@email.com` (customer) and `robert.taylor@email.com` (admin), both with the intentionally public demo password `password123`. Use only synthetic data. The demo API binds to loopback, has public read endpoints and incomplete access checks, and must not be exposed on the internet. The legacy React Scripts dependency tree also has known audit findings that require a separate dependency and security update before hosting.
+Open http://localhost:3000. The preview server proxies `/api` calls to the backend on port 8080. For frontend development, `npm run dev` starts Vite with the same proxy.
 
-## Java + MySQL implementation
+Demo logins (all use the public demo password `password123`):
 
-Requires Java 17, Maven, and a local MySQL database named `car_service_db`. Set `DB_USERNAME`, `DB_PASSWORD`, and a private random `JWT_SECRET` of at least 32 bytes in the environment. The required JWT secret prevents the old short signing key from causing token-generation failures.
+- `john.anderson@email.com` - customer
+- `robert.taylor@email.com` - admin
+
+The demo backend keeps its data in memory, so every restart reseeds the sample users, cars and requests.
+
+## How it fits together
+
+- Log in and the backend returns a JWT; the React app stores it and sends it as a bearer token on every request.
+- The backend checks the token on all `/api` routes. Admin-only routes (dashboard overviews, user deletion, request status changes) also check the role. Customers can only read and change their own cars, requests and profile.
+- Registering always creates a customer account; the two admin accounts come from the seed data.
+- `backend/src/` is split into the in-memory store, the seed data, the auth middleware and one route module per resource.
+
+## Java + MySQL version
+
+Needs Java 17, Maven and a local MySQL database named `car_service_db`.
 
 ```sh
-cd "Car Service Management System/backend"
-mvn spring-boot:run
+cd backend-java
+DB_USERNAME=root DB_PASSWORD=... JWT_SECRET=$(openssl rand -hex 32) mvn spring-boot:run
 ```
 
-Run the matching frontend from `Car Service Management System/frontend/` with `npm ci`, `npm run build`, and `npm run preview`. Database tables are updated through Hibernate in the current development configuration. Review that setting before using an existing database.
+It serves the same frontend (`frontend/`); the endpoints are listed in `docs/java-api.md`. Tables are managed by Hibernate (`ddl-auto=update`), so point it at a scratch database. There is also a `docker-compose.yml` that brings up MySQL, this backend and the frontend together; it expects `MYSQL_ROOT_PASSWORD`, `DB_PASSWORD` and `JWT_SECRET` in the environment.
 
-The Docker Compose configuration in the nested project also requires private `MYSQL_ROOT_PASSWORD`, `DB_PASSWORD`, and `JWT_SECRET` environment values. It is an alternative development setup, not a verified hosted deployment.
+## Known limits
 
-## Scope and limits
-
-This is a local demonstration, not a deployed service. Authentication, authorization, seeded demo accounts, CORS, database settings, and error handling need review before handling real customer data. Generated dependency folders are excluded; install packages from the lockfiles. The root README is the setup guide for both implementations; nested setup documents point here to avoid contradictory instructions.
+- This is a local learning demo, not something to expose on the internet. CORS is open, the demo password is public, and the Node backend forgets everything on restart.
+- Invoice, report, settings and notification features were sketched but never finished; the drafts live in `docs/incomplete-java-controller-examples/` and are not wired in.
+- `npm audit` currently flags a ReDoS issue in `picomatch`, a build-time dependency of Vite, with no fixed release yet. It only affects the dev tooling, not the built app.

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Icons&display=swap');
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -30,5 +32,3 @@ code {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Material+Icons&display=swap');

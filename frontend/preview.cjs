@@ -2,7 +2,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const root = path.join(__dirname, 'build');
+const root = path.join(__dirname, 'dist');
 const port = Number(process.env.PORT || 3000);
 const apiPort = Number(process.env.API_PORT || 8080);
 const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.ico':'image/x-icon'};
