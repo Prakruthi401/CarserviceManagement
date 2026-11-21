@@ -1,5 +1,7 @@
 # Car Service Management System
 
+Local demo only. The Node demo runs without a database; the Java version needs MySQL. Not deployed as a public service.
+
 A learning project I built to practise full-stack development. Customers register their cars and raise service requests; staff move each request through pending, in progress and completed. There are two backend implementations of the same app - pick one:
 
 | Path | What it is |
